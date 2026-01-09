@@ -1,0 +1,99 @@
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import * as jwt from 'jsonwebtoken'
+
+import type { Request, Response, NextFunction } from "express";
+import type { StringValue } from 'ms';
+
+import User  from "../models/user.model.js";
+
+import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
+if (!JWT_SECRET) throw new Error('JWT_SECRET is not defined');
+if (!JWT_EXPIRES_IN) throw new Error('JWT_EXPIRES_IN is not defined');
+
+
+
+export const signUp = async (req: Request, res: Response, next: NextFunction)=> {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const { name, email, password } = req.body;
+
+        const existingUser = await User.findOne({email});
+
+        if(existingUser) {
+            const message = "User already exists";
+            const error = new Error(message);
+            res.statusCode = 409;
+            throw error;
+        }
+
+        // Hash the password
+        const salt = bcrypt.genSaltSync(10);
+        const hashPassword = bcrypt.hashSync(password, salt);
+
+        // Create a new User
+        const newUsers = await User.create([{name, email, password: hashPassword}], { session });
+
+        let expireTime: StringValue = JWT_EXPIRES_IN as StringValue;
+        let secret: string = JWT_SECRET as string || 'some-secret-key';
+
+        const token = jwt.sign({userId: newUsers[0]?._id}, secret, { expiresIn: expireTime});
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(201).json({
+            success: true,
+            message: 'User created successfully',
+            data: {
+                token: token,
+                user: newUsers[0]
+            }
+        });
+    } catch(error){
+        session.abortTransaction();
+        next(error);
+    }
+};
+
+export const signIn = async (req: Request, res: Response, next: NextFunction)=> {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+
+        if(!user){
+            const error = new Error("User does not exist");
+            res.statusCode = 404;
+            throw error;
+        }
+
+        const isPasswordValid = bcrypt.compareSync(password, user.password);
+
+        if(!isPasswordValid){
+            const error = new Error("Invalid Password");
+            res.statusCode = 401;
+            throw error;
+        }
+
+        let expireTime: StringValue = JWT_EXPIRES_IN as StringValue;
+        let secret: string = JWT_SECRET as string || 'some-secret-key';
+
+        const token = jwt.sign({userId: user._id}, secret, { expiresIn: expireTime });
+
+        res.status(200).json({
+            success: true,
+            message: "User signed in successfully",
+            data: {
+                user,
+                token,
+            }
+        });
+    } catch(error) {
+        next(error);
+    }
+};
+
+export const signOut = (req: Request, res: Response, next: NextFunction)=> {};

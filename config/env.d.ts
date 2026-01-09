@@ -1,0 +1,2 @@
+export declare const PORT: string | undefined, NODE_ENV: string | undefined, DB_URI: string | undefined, JWT_SECRET: string | undefined, JWT_EXPIRES_IN: string | undefined, ARCJET_KEY: string | undefined, ARCJET_ENV: string | undefined, QSTASH_URL: string | undefined, QSTASH_TOKEN: string | undefined, SERVER_URL: string | undefined, EMAIL_PASSWORD: string | undefined;
+//# sourceMappingURL=env.d.ts.map
