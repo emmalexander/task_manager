@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 import type { Request, Response, NextFunction } from "express";
 import type { StringValue } from 'ms';
@@ -18,9 +18,9 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
     session.startTransaction();
 
     try {
-        const { name, email, password } = req.body;
+        const { firstName, lastName, phoneNumber, email, password } = req.body;
 
-        const existingUser = await User.findOne({email});
+        const existingUser = await User.findOne({email, phoneNumber});
 
         if(existingUser) {
             const message = "User already exists";
@@ -34,7 +34,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
         const hashPassword = bcrypt.hashSync(password, salt);
 
         // Create a new User
-        const newUsers = await User.create([{name, email, password: hashPassword}], { session });
+        const newUsers = await User.create([{firstName, lastName, phoneNumber, email, password: hashPassword}], { session });
 
         let expireTime: StringValue = JWT_EXPIRES_IN as StringValue;
         let secret: string = JWT_SECRET as string || 'some-secret-key';

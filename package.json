@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node ./src/app.ts",
-    "dev": "nodemon ./src/app.ts",
-    "build": "tsc"
+    "build": "rimraf dist && tsc",
+    "prestart": "npm run build",
+    "start": "node dist/src/app.js",
+    "preserve": "npm run build",
+    "serve": "tsc -w & nodemon dist/src/app.js"
   },
   "dependencies": {
     "@arcjet/node": "^1.0.0-beta.16",
@@ -19,7 +21,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.2",
     "morgan": "~1.9.1",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "rimraf": "^6.1.2"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",

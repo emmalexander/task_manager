@@ -1,7 +1,9 @@
-const errorMiddleware = (err, req, res, next)=>{
+import type {Request, Response, NextFunction } from "express";
+
+const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction): void => {
     try {
-        let error = { ...err };
-        error.message = err.message;
+        let error: any = { ...err };
+        error.message = err?.message;
 
         console.error(err);
 
@@ -13,16 +15,22 @@ const errorMiddleware = (err, req, res, next)=>{
         }
 
         // Mongoose duplicate key
-        if(err.statusCode === 11000){
+        if(err?.code === 11000){
             const message = 'Duplicate field value entered';
-            error = new Error(message);
+            error = new Error(message) as any;
             error.statusCode = 400;
         }
 
         // Mongoose validation error
         if(err.name === 'ValidationError'){
-            const message = Object.values(err.errors).map(val=> val.message);
-            error = new Error(message.join(', '));
+            const messages = Object.values(err.errors as Record<string, { message?: string }>).map((val) => val?.message || String(val));
+            error = new Error(messages.join(', '));
+            error.statusCode = 400;
+        }
+
+        if(err?.name === "TypeError"){
+            const message = 'Sorry an unexpected error occurred';
+            error = new Error(message) as any;
             error.statusCode = 400;
         }
     
