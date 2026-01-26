@@ -70,6 +70,11 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
             throw error;
         }
 
+        console.log("User found:", user);
+
+        console.log("Password from DB:", user.password);
+        console.log("Password from Request:", password);
+
         const isPasswordValid = bcrypt.compareSync(password, user.password);
 
         if(!isPasswordValid){
