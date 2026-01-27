@@ -13,7 +13,7 @@ afterAll(async () => {
     await mongoose.connection.close();
 });
 
-describe("GET /", () => {
+describe("Welcome message test", () => {
     it("should return welcome message", async () => {
         const res = await request(app).get("/");
         expect(res.statusCode).toEqual(200);
@@ -21,18 +21,18 @@ describe("GET /", () => {
     });
 });
 
-// describe("Sign in endpoint test", () => {
-//     it("should return 200 and a token", async () => {
-//         const res = await request(app)
-//             .post("/api/v1/auth/sign-in")
-//             .send({
-//                 email: "emmanuelohiocheoya@gmail.com",
-//                 password: "12345",
-//             });
-//         expect(res.statusCode).toEqual(200);
-//         expect(res.body).toHaveProperty("token");
-//     });
-// });
+describe("Sign in endpoint test", () => {
+    it("should return 200 and a token", async () => {
+        const res = await request(app)
+            .post("/api/v1/auth/sign-in")
+            .send({
+                email: "emmanuelohiocheoya@gmail.com",
+                password: "Youtube123!@#",
+            });
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.data).toHaveProperty("token");
+    });
+});
 
 describe("Sign up endpoint test", () => {
     it("should return 201 and a token", async () => {
@@ -50,44 +50,44 @@ describe("Sign up endpoint test", () => {
     });
 });
 
-// describe("Sign up existing user endpoint test", () => {
-//     it("should return 409 if user already exists", async () => {
-//         const res = await request(app)
-//             .post("/api/v1/auth/sign-up")
-//             .send({
-//                 firstName: "Test",
-//                 lastName: "User",
-//                 phoneNumber: "08012345678",
-//                 email: "emmanuelohiocheoya@gmail.com",
-//                 password: "Youtube123!@#",
-//             });
-//         expect(res.statusCode).toEqual(409);
-//         expect(res.body).toHaveProperty("message", "User already exists");
-//     });
-// });
+describe("Sign up existing user endpoint test", () => {
+    it("should return 409 if user already exists", async () => {
+        const res = await request(app)
+            .post("/api/v1/auth/sign-up")
+            .send({
+                firstName: "Test",
+                lastName: "User",
+                phoneNumber: "08012345678",
+                email: "emmanuelohiocheoya@gmail.com",
+                password: "Youtube123!@#",
+            });
+        expect(res.statusCode).toEqual(409);
+        expect(res.body.error).toEqual("User already exists");
+    });
+});
 
-// describe("Sign in non-existing user endpoint test", () => {
-//     it("should return 404 if user does not exist", async () => {
-//         const res = await request(app)
-//             .post("/api/v1/auth/sign-in")
-//             .send({
-//                 email: "emmanuelohiocheoya@gmail.com",
-//                 password: "wrongpassword",
-//             });
-//         expect(res.statusCode).toEqual(404);
-//         expect(res.body).toHaveProperty("message", "User does not exist");
-//     });
-// });
+describe("Sign in non-existing user endpoint test", () => {
+    it("should return 404 if user does not exist", async () => {
+        const res = await request(app)
+            .post("/api/v1/auth/sign-in")
+            .send({
+                email: "emmanuelohiocheoeeya@gmail.com",
+                password: "wrongpassword",
+            });
+        expect(res.statusCode).toEqual(404);
+        expect(res.body.error).toEqual("User does not exist");
+    });
+});
 
-// describe("Sign in with wrong password endpoint test", () => {
-//     it("should return 401 if password is incorrect", async () => {
-//         const res = await request(app)
-//             .post("/api/v1/auth/sign-in")
-//             .send({
-//                 email: "emmanuelohiocheoya@gmail.com",
-//                 password: "wrongpassword",
-//             });
-//         expect(res.statusCode).toEqual(401);
-//         expect(res.body).toHaveProperty("message", "Invalid Password");
-//     });
-// });
+describe("Sign in with wrong password endpoint test", () => {
+    it("should return 401 if password is incorrect", async () => {
+        const res = await request(app)
+            .post("/api/v1/auth/sign-in")
+            .send({
+                email: "emmanuelohiocheoya@gmail.com",
+                password: "wrongpassword",
+            });
+        expect(res.statusCode).toEqual(401);
+        expect(res.body.error).toEqual("Invalid Password");
+    });
+});

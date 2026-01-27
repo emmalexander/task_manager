@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { match } from "node:assert";
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -34,12 +33,11 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'User Password is required'],
-        minLength: 6,
+        minLength: 8,
         match: [
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s])[^\s]{8,}$/,
             'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
         ],
-        select: false,
     }
 }, {timestamps: true});
 

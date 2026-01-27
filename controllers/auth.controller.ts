@@ -24,8 +24,8 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
 
         if(existingUser) {
             const message = "User already exists";
-            const error = new Error(message);
-            res.statusCode = 409;
+            const error: any = new Error(message);
+            error.statusCode = 409;
             throw error;
         }
 
@@ -35,6 +35,8 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
 
         // Create a new User
         const newUsers = await User.create([{firstName, lastName, phoneNumber, email, password: hashPassword}], { session });
+        const newUserWithOutPassword = await User.findById(newUsers[0]?._id).select("-password");
+        console.log("New User Created:", newUserWithOutPassword);
 
         let expireTime: StringValue = JWT_EXPIRES_IN as StringValue;
         let secret: string = JWT_SECRET as string || 'some-secret-key';
@@ -49,7 +51,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
             message: 'User created successfully',
             data: {
                 token: token,
-                user: newUsers[0]
+                user: newUserWithOutPassword,  //newUsers[0]
             }
         });
     } catch(error){
@@ -65,8 +67,8 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
         const user = await User.findOne({ email });
 
         if(!user){
-            const error = new Error("User does not exist");
-            res.statusCode = 404;
+            const error: any = new Error("User does not exist");
+            error.statusCode = 404;
             throw error;
         }
 
@@ -78,8 +80,8 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
         const isPasswordValid = bcrypt.compareSync(password, user.password);
 
         if(!isPasswordValid){
-            const error = new Error("Invalid Password");
-            res.statusCode = 401;
+            const error: any = new Error("Invalid Password");
+            error.statusCode = 401;
             throw error;
         }
 

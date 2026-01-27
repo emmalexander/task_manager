@@ -16,7 +16,7 @@ export const signUp = async (req, res, next) => {
         if (existingUser) {
             const message = "User already exists";
             const error = new Error(message);
-            res.statusCode = 409;
+            error.statusCode = 409;
             throw error;
         }
         // Hash the password
@@ -24,6 +24,8 @@ export const signUp = async (req, res, next) => {
         const hashPassword = bcrypt.hashSync(password, salt);
         // Create a new User
         const newUsers = await User.create([{ firstName, lastName, phoneNumber, email, password: hashPassword }], { session });
+        const newUserWithOutPassword = await User.findById(newUsers[0]?._id).select("-password");
+        console.log("New User Created:", newUserWithOutPassword);
         let expireTime = JWT_EXPIRES_IN;
         let secret = JWT_SECRET || 'some-secret-key';
         const token = jwt.sign({ userId: newUsers[0]?._id }, secret, { expiresIn: expireTime });
@@ -34,7 +36,7 @@ export const signUp = async (req, res, next) => {
             message: 'User created successfully',
             data: {
                 token: token,
-                user: newUsers[0]
+                user: newUserWithOutPassword, //newUsers[0]
             }
         });
     }
@@ -49,7 +51,7 @@ export const signIn = async (req, res, next) => {
         const user = await User.findOne({ email });
         if (!user) {
             const error = new Error("User does not exist");
-            res.statusCode = 404;
+            error.statusCode = 404;
             throw error;
         }
         console.log("User found:", user);
@@ -58,7 +60,7 @@ export const signIn = async (req, res, next) => {
         const isPasswordValid = bcrypt.compareSync(password, user.password);
         if (!isPasswordValid) {
             const error = new Error("Invalid Password");
-            res.statusCode = 401;
+            error.statusCode = 401;
             throw error;
         }
         let expireTime = JWT_EXPIRES_IN;
