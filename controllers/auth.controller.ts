@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 
 import type { Request, Response, NextFunction } from "express";
 import type { StringValue } from 'ms';
 
 import User  from "../models/user.model.js";
+import TaskList from "../models/task-list.model.js";
 
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
 if (!JWT_SECRET) throw new Error('JWT_SECRET is not defined');
@@ -35,13 +36,25 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
 
         // Create a new User
         const newUsers = await User.create([{firstName, lastName, phoneNumber, email, password: hashPassword}], { session });
+        const createdUserId = (newUsers[0] as any)._id as mongoose.Types.ObjectId;
         const newUserWithOutPassword = await User.findById(newUsers[0]?._id).select("-password");
-        console.log("New User Created:", newUserWithOutPassword);
+
+        // Create a default task list for the user within the same session
+        const defaultTaskLists = await TaskList.create([
+            {
+                name: 'My Tasks',
+                description: 'Default task list',
+                userId: createdUserId,
+                isDefault: true,
+            }
+        ], { session });
+        const defaultTaskList = defaultTaskLists[0];
+        //console.log("New User Created:", newUserWithOutPassword);
 
         let expireTime: StringValue = JWT_EXPIRES_IN as StringValue;
         let secret: string = JWT_SECRET as string || 'some-secret-key';
 
-        const token = jwt.sign({userId: newUsers[0]?._id}, secret, { expiresIn: expireTime});
+        const token = jwt.sign({userId: createdUserId}, secret, { expiresIn: expireTime});
 
         await session.commitTransaction();
         session.endSession();
@@ -51,7 +64,8 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
             message: 'User created successfully',
             data: {
                 token: token,
-                user: newUserWithOutPassword,  //newUsers[0]
+                user: newUserWithOutPassword,
+                defaultTaskList,
             }
         });
     } catch(error){
@@ -65,6 +79,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
+        const userWithoutPassword = await User.findById(user?._id).select("-password");
 
         if(!user){
             const error: any = new Error("User does not exist");
@@ -72,10 +87,10 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
             throw error;
         }
 
-        console.log("User found:", user);
+        //console.log("User found:", user);
 
-        console.log("Password from DB:", user.password);
-        console.log("Password from Request:", password);
+        //console.log("Password from DB:", user.password);
+        //console.log("Password from Request:", password);
 
         const isPasswordValid = bcrypt.compareSync(password, user.password);
 
@@ -94,7 +109,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
             success: true,
             message: "User signed in successfully",
             data: {
-                user,
+                userWithoutPassword,
                 token,
             }
         });

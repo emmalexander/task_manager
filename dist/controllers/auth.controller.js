@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 import User from "../models/user.model.js";
+import TaskList from "../models/task-list.model.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
 if (!JWT_SECRET)
     throw new Error('JWT_SECRET is not defined');
@@ -24,11 +25,22 @@ export const signUp = async (req, res, next) => {
         const hashPassword = bcrypt.hashSync(password, salt);
         // Create a new User
         const newUsers = await User.create([{ firstName, lastName, phoneNumber, email, password: hashPassword }], { session });
+        const createdUserId = newUsers[0]._id;
         const newUserWithOutPassword = await User.findById(newUsers[0]?._id).select("-password");
-        console.log("New User Created:", newUserWithOutPassword);
+        // Create a default task list for the user within the same session
+        const defaultTaskLists = await TaskList.create([
+            {
+                name: 'My Tasks',
+                description: 'Default task list',
+                userId: createdUserId,
+                isDefault: true,
+            }
+        ], { session });
+        const defaultTaskList = defaultTaskLists[0];
+        //console.log("New User Created:", newUserWithOutPassword);
         let expireTime = JWT_EXPIRES_IN;
         let secret = JWT_SECRET || 'some-secret-key';
-        const token = jwt.sign({ userId: newUsers[0]?._id }, secret, { expiresIn: expireTime });
+        const token = jwt.sign({ userId: createdUserId }, secret, { expiresIn: expireTime });
         await session.commitTransaction();
         session.endSession();
         res.status(201).json({
@@ -36,7 +48,8 @@ export const signUp = async (req, res, next) => {
             message: 'User created successfully',
             data: {
                 token: token,
-                user: newUserWithOutPassword, //newUsers[0]
+                user: newUserWithOutPassword,
+                defaultTaskList,
             }
         });
     }
@@ -49,14 +62,15 @@ export const signIn = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
+        const userWithoutPassword = await User.findById(user?._id).select("-password");
         if (!user) {
             const error = new Error("User does not exist");
             error.statusCode = 404;
             throw error;
         }
-        console.log("User found:", user);
-        console.log("Password from DB:", user.password);
-        console.log("Password from Request:", password);
+        //console.log("User found:", user);
+        //console.log("Password from DB:", user.password);
+        //console.log("Password from Request:", password);
         const isPasswordValid = bcrypt.compareSync(password, user.password);
         if (!isPasswordValid) {
             const error = new Error("Invalid Password");
@@ -70,7 +84,7 @@ export const signIn = async (req, res, next) => {
             success: true,
             message: "User signed in successfully",
             data: {
-                user,
+                userWithoutPassword,
                 token,
             }
         });

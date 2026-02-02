@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from "../config/env.js";
 if (!JWT_SECRET) throw new Error('JWT_SECRET is not defined');
 

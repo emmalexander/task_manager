@@ -1,4 +1,5 @@
-import User from "../models/user.model.js"
+import User from "../models/user.model.js";
+import TaskList from "../models/task-list.model.js";
 
 import type { Request, Response, NextFunction } from "express";
 
@@ -12,9 +13,9 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction)=
     }
 }
 
-export const getUser = async (req: Request, res: Response, next: NextFunction)=> {
+export const getUser = async (req: any, res: Response, next: NextFunction)=> {
     try {
-        const user = await User.findById(req.params.id).select("-password");
+        const user = await User.findById(req.user._id,).select("-password");
 
         if(!user){
             const error = new Error("User not found");
@@ -22,7 +23,14 @@ export const getUser = async (req: Request, res: Response, next: NextFunction)=>
             throw error;
         }
 
-        res.status(200).json({success: true, data: user});
+        const userTaskLists = await TaskList.find({userId: user._id}).populate('tasks')??[];
+
+        const userData = {
+            user: user,
+            taskLists: userTaskLists,
+        };
+
+        res.status(200).json({success: true, data: userData});
     } catch (error){
         next(error);
     }

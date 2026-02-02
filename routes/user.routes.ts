@@ -5,10 +5,10 @@ import authorize from "../middlewares/auth.middleware.js";
 const userRoute = Router();
 
 // Path: api/v1/user/ (GET)
-userRoute.get('/', getUsers);
+//userRoute.get('/', getUsers);
 
-// Path: api/v1/user/:id (GET)
-userRoute.get('/:id',authorize, getUser);
+// Path: api/v1/user/ (GET)
+userRoute.get('/', authorize, getUser);
 
 userRoute.post('/', (req, res)=> res.send({title : 'CREATE new user'}));
 
