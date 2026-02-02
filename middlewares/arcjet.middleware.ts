@@ -1,6 +1,8 @@
-import aj from '../config/arcjet.js'
+import aj from '../config/arcjet.js';
 
-const arcjetMiddleware = async (req, res, next)=>{
+import type { Request, Response, NextFunction } from "express";
+
+const arcjetMiddleware = async (req: Request, res: Response, next: NextFunction)=>{
     try{
         const decision = await aj.protect(req, {requested: 1});
 
