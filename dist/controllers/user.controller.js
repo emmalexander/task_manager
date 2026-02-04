@@ -28,4 +28,19 @@ export const getUser = async (req, res, next) => {
         next(error);
     }
 };
+export const deleteUser = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findByIdAndDelete(userId);
+        if (!user) {
+            const error = new Error("User not found");
+            res.statusCode = 404;
+            throw error;
+        }
+        res.status(200).json({ success: true, message: "User deleted successfully" });
+    }
+    catch (error) {
+        next(error);
+    }
+};
 //# sourceMappingURL=user.controller.js.map

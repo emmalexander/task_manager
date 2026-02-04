@@ -1,6 +1,6 @@
 import { Router } from "express";
 import authorize from "../middlewares/auth.middleware.js";
-import { createTask, createTaskList, getATaskList, getUserTaskLists, getAllTasks, getTaskDetails, getUserTasks } from "../controllers/task.controller.js";
+import { createTask, createTaskList, getATaskList, getAllTasks, updateATaskList, updateATask, deleteTask, deleteTaskList, getTasksByStatus } from "../controllers/task.controller.js";
 
 const taskRouter = Router();
 
@@ -12,14 +12,14 @@ taskRouter.get('/', authorize, getAllTasks);
 
 taskRouter.get('/lists', authorize, getATaskList);
 
-taskRouter.get('/:id', authorize, getTaskDetails);
+taskRouter.get('/status/:status', authorize, getTasksByStatus);
 
-taskRouter.put('/:id', authorize, (req, res) => res.send({ title : 'UPDATE task' }));
+taskRouter.put('/lists/:id', authorize, updateATaskList);
 
-taskRouter.delete('/:id', authorize, (req, res) => res.send({ title : 'DELETE task' }));
+taskRouter.put('/:id', authorize, updateATask);
 
-taskRouter.get('/user', authorize, getUserTasks);
+taskRouter.delete('/:id', authorize, deleteTask);
 
-taskRouter.get('/user/lists', authorize, getUserTaskLists);
+taskRouter.delete('/lists/:id', authorize, deleteTaskList);
 
 export default taskRouter;
