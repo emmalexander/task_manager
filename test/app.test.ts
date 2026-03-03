@@ -2,16 +2,11 @@
 import app from "../dist/src/app.js";
 import request from "supertest";
 // const request = require("supertest");
-import mongoose from "mongoose";
-import { DB_URI } from "../config/env.js";
+import { initTestEnv } from "./setup";
+import registerTaskTests from "./task.test";
 
-beforeAll(async () => {
-    await mongoose.connect(DB_URI ?? "");
-});
-
-afterAll(async () => {
-    await mongoose.connection.close();
-});
+// initialize DB connection hooks
+initTestEnv();
 
 describe("Welcome message test", () => {
     it("should return welcome message", async () => {
@@ -91,3 +86,7 @@ describe("Sign in with wrong password endpoint test", () => {
         expect(res.body.error).toEqual("Invalid Password");
     });
 });
+
+// register task tests after auth tests are declared
+registerTaskTests();
+
