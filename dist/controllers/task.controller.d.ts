@@ -5,7 +5,7 @@ export declare const updateATaskList: (req: any, res: Response, next: NextFuncti
 export declare const updateATask: (req: any, res: Response, next: NextFunction) => Promise<void>;
 export declare const deleteTask: (req: any, res: Response, next: NextFunction) => Promise<void>;
 export declare const deleteTaskList: (req: any, res: Response, next: NextFunction) => Promise<void>;
-export declare const getTasksByStatus: (req: any, res: Response, next: NextFunction) => Promise<void>;
-export declare const getATaskList: (req: any, res: Response, next: NextFunction) => Promise<void>;
-export declare const getAllTasks: (req: any, res: Response, next: NextFunction) => void;
+export declare const getUserTasksByStatus: (req: any, res: Response, next: NextFunction) => Promise<void>;
+export declare const getUserTaskLists: (req: any, res: Response, next: NextFunction) => Promise<void>;
+export declare const getUserTasks: (req: any, res: Response, next: NextFunction) => Promise<void>;
 //# sourceMappingURL=task.controller.d.ts.map
