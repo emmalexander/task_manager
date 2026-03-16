@@ -65,7 +65,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
             data: {
                 token: token,
                 user: newUserWithOutPassword,
-                defaultTaskList,
+                taskList: defaultTaskList,
             }
         });
     } catch(error){
@@ -109,8 +109,8 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
             success: true,
             message: "User signed in successfully",
             data: {
-                userWithoutPassword,
-                token,
+                user: userWithoutPassword,
+                token: token,
             }
         });
     } catch(error) {

@@ -33,7 +33,7 @@ app.get("/", (req, res)=>{
     res.send('Welcome to Task Manager API');
 });
 
-app.listen(PORT, async ()=>{
+app.listen(Number(PORT), "0.0.0.0", async ()=>{
     console.log(`Task Manager APP is running on http://localhost:${PORT}`);
     await connectToDatabase();
 });

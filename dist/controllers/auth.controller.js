@@ -49,7 +49,7 @@ export const signUp = async (req, res, next) => {
             data: {
                 token: token,
                 user: newUserWithOutPassword,
-                defaultTaskList,
+                taskList: defaultTaskList,
             }
         });
     }
@@ -84,8 +84,8 @@ export const signIn = async (req, res, next) => {
             success: true,
             message: "User signed in successfully",
             data: {
-                userWithoutPassword,
-                token,
+                user: userWithoutPassword,
+                token: token,
             }
         });
     }
