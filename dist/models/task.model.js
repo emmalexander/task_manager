@@ -12,6 +12,10 @@ const taskSchema = new mongoose.Schema({
         trim: true,
         maxLength: 500,
     },
+    isStarred: {
+        type: Boolean,
+        default: false,
+    },
     status: {
         type: String,
         enum: ['pending', 'in-progress', 'completed'],

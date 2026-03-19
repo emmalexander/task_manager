@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 declare const Task: mongoose.Model<{
     title: string;
+    isStarred: boolean;
     status: "pending" | "in-progress" | "completed";
     dueDate: NativeDate;
     description?: string | null;
@@ -10,6 +11,7 @@ declare const Task: mongoose.Model<{
     id: string;
 }, mongoose.Document<unknown, {}, {
     title: string;
+    isStarred: boolean;
     status: "pending" | "in-progress" | "completed";
     dueDate: NativeDate;
     description?: string | null;
@@ -21,6 +23,7 @@ declare const Task: mongoose.Model<{
     timestamps: true;
 }> & Omit<{
     title: string;
+    isStarred: boolean;
     status: "pending" | "in-progress" | "completed";
     dueDate: NativeDate;
     description?: string | null;
@@ -36,6 +39,7 @@ declare const Task: mongoose.Model<{
     timestamps: true;
 }, {
     title: string;
+    isStarred: boolean;
     status: "pending" | "in-progress" | "completed";
     dueDate: NativeDate;
     description?: string | null;
@@ -43,6 +47,7 @@ declare const Task: mongoose.Model<{
     taskListId?: mongoose.Types.ObjectId | null;
 } & mongoose.DefaultTimestampProps, mongoose.Document<unknown, {}, {
     title: string;
+    isStarred: boolean;
     status: "pending" | "in-progress" | "completed";
     dueDate: NativeDate;
     description?: string | null;
@@ -54,6 +59,7 @@ declare const Task: mongoose.Model<{
     timestamps: true;
 }>> & Omit<{
     title: string;
+    isStarred: boolean;
     status: "pending" | "in-progress" | "completed";
     dueDate: NativeDate;
     description?: string | null;
@@ -70,6 +76,7 @@ declare const Task: mongoose.Model<{
 } | {
     [x: string]: mongoose.SchemaDefinitionProperty<any, any, mongoose.Document<unknown, {}, {
         title: string;
+        isStarred: boolean;
         status: "pending" | "in-progress" | "completed";
         dueDate: NativeDate;
         description?: string | null;
@@ -81,6 +88,7 @@ declare const Task: mongoose.Model<{
         timestamps: true;
     }>> & Omit<{
         title: string;
+        isStarred: boolean;
         status: "pending" | "in-progress" | "completed";
         dueDate: NativeDate;
         description?: string | null;
@@ -95,6 +103,7 @@ declare const Task: mongoose.Model<{
     }> | undefined;
 }, {
     title: string;
+    isStarred: boolean;
     status: "pending" | "in-progress" | "completed";
     dueDate: NativeDate;
     description?: string | null;
@@ -108,6 +117,7 @@ declare const Task: mongoose.Model<{
     __v: number;
 }>, {
     title: string;
+    isStarred: boolean;
     status: "pending" | "in-progress" | "completed";
     dueDate: NativeDate;
     description?: string | null;

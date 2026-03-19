@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { PORT } from "../config/env.js";
 //import { createRequire } from 'module';
 import cookieParser from "cookie-parser";
@@ -12,6 +13,7 @@ import errorMiddleware from "../middlewares/error.middleware.js";
 import arcjetMiddleware from "../middlewares/arcjet.middleware.js";
 // import workflowRouter from "./routes/workflow.routes.js";
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

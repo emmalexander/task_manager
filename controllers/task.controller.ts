@@ -254,12 +254,152 @@ export const getUserTasks = async (req: any, res: Response, next: NextFunction)=
     }   
 };
 
-// export const getAllTasks = (req: any, res: Response, next: NextFunction)=> {
-//     // try {
+export const addTaskToFavorite = async (req: any, res: Response, next: NextFunction)=> {
+    try {
+        const taskId = req.params.id;
 
+        const task = await Task.findById(taskId);
 
-//     //     res.status(200).json({ title : 'GET all tasks' });
-//     // } catch (error){
-//     //     next(error);
-//     // }
-// };
+        if(!task){
+            const error: any = new Error('Task not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (task.userId?.toString() !== req.user._id.toString()){
+            const error: any = new Error('Not authorized to update this task');
+            error.statusCode = 403;
+            throw error;
+        }
+
+        // Should not allow changing the userId, createdAt, taskListId, _id
+        //Object.assign(task, req.body);
+        task.isStarred = true;
+        await task.save();
+
+        res.status(200).json({success: true,message: "Task updated successfully", data: task});
+    } catch (error){
+        next(error);
+    }
+
+    
+}
+
+export const removeTaskFromFavorite = async (req: any, res: Response, next: NextFunction)=> {
+    try {
+        const taskId = req.params.id;
+
+        const task = await Task.findById(taskId);
+
+        if(!task){
+            const error: any = new Error('Task not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (task.userId?.toString() !== req.user._id.toString()){
+            const error: any = new Error('Not authorized to update this task');
+            error.statusCode = 403;
+            throw error;
+        }
+
+        // Should not allow changing the userId, createdAt, taskListId, _id
+        //Object.assign(task, req.body);
+        task.isStarred = false;
+        await task.save();
+
+        res.status(200).json({success: true,message: "Task updated successfully", data: task});
+    } catch (error){
+        next(error);
+    }
+
+    
+}
+
+export const getPendingTasks = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // Get total count of pending tasks for the user
+        const totalTasks = await Task.countDocuments({ userId: req.user._id, status: "pending" });
+
+        // Get paginated tasks
+        const tasks = await Task.find({ userId: req.user._id, status: "pending" })
+            .skip(skip)
+            .limit(limit);
+
+        const totalPages = Math.ceil(totalTasks / limit);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                page: page,
+                totalPages: totalPages,
+                totalTasks: totalTasks,
+                tasks: tasks
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+export const getInProgressTasks = async (req: any, res: Response, next: NextFunction) => {
+        try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // Get total count of pending tasks for the user
+        const totalTasks = await Task.countDocuments({ userId: req.user._id, status: "in-progress" });
+
+        // Get paginated tasks
+        const tasks = await Task.find({ userId: req.user._id, status: "in-progress" })
+            .skip(skip)
+            .limit(limit);
+
+        const totalPages = Math.ceil(totalTasks / limit);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                page: page,
+                totalPages: totalPages,
+                totalTasks: totalTasks,
+                tasks: tasks
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+export const getCompletedTasks = async (req: any, res: Response, next: NextFunction) => {
+        try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // Get total count of pending tasks for the user
+        const totalTasks = await Task.countDocuments({ userId: req.user._id, status: "completed" });
+
+        // Get paginated tasks
+        const tasks = await Task.find({ userId: req.user._id, status: "completed" })
+            .skip(skip)
+            .limit(limit);
+
+        const totalPages = Math.ceil(totalTasks / limit);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                page: page,
+                totalPages: totalPages,
+                totalTasks: totalTasks,
+                tasks: tasks
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+}

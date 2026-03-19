@@ -49,6 +49,7 @@ export default function registerTaskTests() {
                 .send({
                     title: "Test Task",
                     description: "This is a test task",
+                    dueDate: new Date(Date.now() + 86400000).toISOString(), // tomorrow
                 });
             expect(res.statusCode).toEqual(201);
             expect(res.body.data).toHaveProperty("id");
@@ -109,6 +110,7 @@ export default function registerTaskTests() {
                     title: "Task to Update",
                     description: "This task will be updated",
                     status: "pending",
+                    dueDate: new Date(Date.now() + 86400000).toISOString(),
                 });
             const taskId = createTaskRes.body.data._id;
 
@@ -145,6 +147,7 @@ export default function registerTaskTests() {
                 .send({
                     title: "Task to Delete",
                     description: "This task will be deleted",
+                    dueDate: new Date(Date.now() + 86400000).toISOString(),
                 });
             const taskId = createTaskRes.body.data.id;
 
