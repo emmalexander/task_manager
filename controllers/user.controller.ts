@@ -36,6 +36,27 @@ export const getUser = async (req: any, res: Response, next: NextFunction)=> {
     }
 }
 
+export const updateUser = async (req: any, res: Response, next: NextFunction)=> {
+    try {
+        const user = await User.findById(req.user._id,).select("-password");
+
+        const update = req.body;
+
+        if(!user){
+            const error = new Error("User not found");
+            res.statusCode = 404;
+            throw error;
+        }
+
+        Object.assign(user, update);
+        await user.save();
+
+        res.status(200).json({success: true, message: "User updated successfully"});
+    } catch (error){
+        next(error);
+    }
+}
+
 export const deleteUser = async (req: any, res: Response, next: NextFunction)=> {
     try {
         const userId = req.user._id;

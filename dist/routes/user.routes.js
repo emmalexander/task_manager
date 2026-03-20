@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUser, getUsers } from "../controllers/user.controller.js";
+import { getUser, getUsers, updateUser } from "../controllers/user.controller.js";
 import authorize from "../middlewares/auth.middleware.js";
 const userRoute = Router();
 // Path: api/v1/user/ (GET)
@@ -7,7 +7,7 @@ const userRoute = Router();
 // Path: api/v1/user/ (GET)
 userRoute.get('/', authorize, getUser);
 userRoute.post('/', (req, res) => res.send({ title: 'CREATE new user' }));
-userRoute.put('/:id', (req, res) => res.send({ title: 'UPDATE a user' }));
+userRoute.put('/', authorize, updateUser);
 userRoute.delete('/:id', (req, res) => res.send({ title: 'DELETE a user' }));
 export default userRoute;
 //# sourceMappingURL=user.routes.js.map

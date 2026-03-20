@@ -132,7 +132,7 @@ export const updateATask = async (req: any, res: Response, next: NextFunction)=>
         Object.assign(task, req.body);
         await task.save();
 
-        res.status(200).json({success: true,message: "Task updated successfully", data: task});
+        res.status(200).json({success: true, message: "Task updated successfully", data: task});
     }catch(error){
         next(error);
     }
@@ -345,6 +345,7 @@ export const getPendingTasks = async (req: any, res: Response, next: NextFunctio
         next(error);
     }
 }
+
 export const getInProgressTasks = async (req: any, res: Response, next: NextFunction) => {
         try {
         const page = Number(req.query.page) || 1;
@@ -374,6 +375,7 @@ export const getInProgressTasks = async (req: any, res: Response, next: NextFunc
         next(error);
     }
 }
+
 export const getCompletedTasks = async (req: any, res: Response, next: NextFunction) => {
         try {
         const page = Number(req.query.page) || 1;
@@ -403,3 +405,32 @@ export const getCompletedTasks = async (req: any, res: Response, next: NextFunct
         next(error);
     }
 }
+
+export const updateATaskStatus = async (req: any, res: Response, next: NextFunction)=> {
+    try{
+        const taskId = req.params.id;
+
+        const newStatus = req.body.status;
+
+        const task =  await Task.findById(taskId);
+
+        if(!task){
+            const error: any = new Error('Task not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (task.userId?.toString() !== req.user._id.toString()){
+            const error: any = new Error('Not authorized to update this task');
+            error.statusCode = 403;
+            throw error;
+        }
+        
+        task.status = newStatus;
+        await task.save();
+
+        res.status(200).json({success: true,message: "Task updated successfully", data: task});
+    }catch(error){
+        next(error);
+    }
+};

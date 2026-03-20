@@ -28,6 +28,23 @@ export const getUser = async (req, res, next) => {
         next(error);
     }
 };
+export const updateUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id).select("-password");
+        const update = req.body;
+        if (!user) {
+            const error = new Error("User not found");
+            res.statusCode = 404;
+            throw error;
+        }
+        Object.assign(user, update);
+        await user.save();
+        res.status(200).json({ success: true, message: "User updated successfully" });
+    }
+    catch (error) {
+        next(error);
+    }
+};
 export const deleteUser = async (req, res, next) => {
     try {
         const userId = req.user._id;

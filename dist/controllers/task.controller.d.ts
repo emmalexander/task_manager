@@ -13,4 +13,5 @@ export declare const removeTaskFromFavorite: (req: any, res: Response, next: Nex
 export declare const getPendingTasks: (req: any, res: Response, next: NextFunction) => Promise<void>;
 export declare const getInProgressTasks: (req: any, res: Response, next: NextFunction) => Promise<void>;
 export declare const getCompletedTasks: (req: any, res: Response, next: NextFunction) => Promise<void>;
+export declare const updateATaskStatus: (req: any, res: Response, next: NextFunction) => Promise<void>;
 //# sourceMappingURL=task.controller.d.ts.map

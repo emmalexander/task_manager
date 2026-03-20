@@ -334,4 +334,27 @@ export const getCompletedTasks = async (req, res, next) => {
         next(error);
     }
 };
+export const updateATaskStatus = async (req, res, next) => {
+    try {
+        const taskId = req.params.id;
+        const newStatus = req.body.status;
+        const task = await Task.findById(taskId);
+        if (!task) {
+            const error = new Error('Task not found');
+            error.statusCode = 404;
+            throw error;
+        }
+        if (task.userId?.toString() !== req.user._id.toString()) {
+            const error = new Error('Not authorized to update this task');
+            error.statusCode = 403;
+            throw error;
+        }
+        task.status = newStatus;
+        await task.save();
+        res.status(200).json({ success: true, message: "Task updated successfully", data: task });
+    }
+    catch (error) {
+        next(error);
+    }
+};
 //# sourceMappingURL=task.controller.js.map
