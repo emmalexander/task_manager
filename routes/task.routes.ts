@@ -12,7 +12,9 @@ taskRouter.post('/', authorize, createTask);
 
 taskRouter.get('/status/:status', authorize, getUserTasksByStatus);
 
-taskRouter.patch('/status/:id', authorize, updateATaskStatus);
+taskRouter.post('/favorites/add/:id', authorize, addTaskToFavorite);
+
+taskRouter.post('/favorites/remove/:id', authorize, removeTaskFromFavorite);
 
 taskRouter.get('/pending', authorize, getPendingTasks);
 
@@ -24,9 +26,7 @@ taskRouter.get('/', authorize, getUserTasks);
 
 taskRouter.put('/:id', authorize, updateATask);
 
-taskRouter.post('/favorites/add/:id', authorize, addTaskToFavorite);
-
-taskRouter.post('/favorites/remove/:id', authorize, removeTaskFromFavorite);
+taskRouter.patch('/status/:id', authorize, updateATaskStatus);
 
 taskRouter.delete('/:id', authorize, deleteTask);
 
