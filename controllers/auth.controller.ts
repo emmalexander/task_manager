@@ -1,16 +1,13 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
 
 import type { Request, Response, NextFunction } from "express";
-import type { StringValue } from 'ms';
 
-import User  from "../models/user.model.js";
+import User from "../models/user.model.js";
 import TaskList from "../models/task-list.model.js";
-
-import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
-if (!JWT_SECRET) throw new Error('JWT_SECRET is not defined');
-if (!JWT_EXPIRES_IN) throw new Error('JWT_EXPIRES_IN is not defined');
+import UserToken from "../models/user-token.model.js";
+import generateTokens from "../utils/generate-token.js";
+import verifyRefreshToken from "../utils/verify-refresh-token.js";
 
 
 
@@ -51,10 +48,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
         const defaultTaskList = defaultTaskLists[0];
         //console.log("New User Created:", newUserWithOutPassword);
 
-        let expireTime: StringValue = JWT_EXPIRES_IN as StringValue;
-        let secret: string = JWT_SECRET as string || 'some-secret-key';
-
-        const token = jwt.sign({userId: createdUserId}, secret, { expiresIn: expireTime});
+        const { accessToken, refreshToken } = await generateTokens({ _id: createdUserId });
 
         await session.commitTransaction();
         session.endSession();
@@ -63,7 +57,8 @@ export const signUp = async (req: Request, res: Response, next: NextFunction)=> 
             success: true,
             message: 'User created successfully',
             data: {
-                token: token,
+                accessToken,
+                refreshToken,
                 user: newUserWithOutPassword,
                 taskList: defaultTaskList,
             }
@@ -79,13 +74,14 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        const userWithoutPassword = await User.findById(user?._id).select("-password");
 
         if(!user){
             const error: any = new Error("User does not exist");
             error.statusCode = 404;
             throw error;
         }
+
+        const userWithoutPassword = await User.findById(user._id).select("-password");
 
         //console.log("User found:", user);
 
@@ -100,17 +96,15 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
             throw error;
         }
 
-        let expireTime: StringValue = JWT_EXPIRES_IN as StringValue;
-        let secret: string = JWT_SECRET as string || 'some-secret-key';
-
-        const token = jwt.sign({userId: user._id}, secret, { expiresIn: expireTime });
+        const { accessToken, refreshToken } = await generateTokens({ _id: user._id });
 
         res.status(200).json({
             success: true,
             message: "User signed in successfully",
             data: {
                 user: userWithoutPassword,
-                token: token,
+                accessToken,
+                refreshToken,
             }
         });
     } catch(error) {
@@ -118,4 +112,59 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
     }
 };
 
-export const signOut = (req: Request, res: Response, next: NextFunction)=> {};
+export const refreshToken = async (req: Request, res: Response, next: NextFunction)=> {
+    try {
+        const { refreshToken } = req.body;
+        if (!refreshToken) {
+            const error: any = new Error("Refresh token is required");
+            error.statusCode = 400;
+            throw error;
+        }
+
+        const decoded = await verifyRefreshToken(refreshToken);
+        if (!decoded || !decoded.userId) {
+            const error: any = new Error("Invalid refresh token");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        // issue new tokens
+        const tokens = await generateTokens({ _id: decoded.userId });
+
+        res.status(200).json({
+            success: true,
+            message: "Token refreshed successfully",
+            data: tokens,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const signOut = async (req: Request, res: Response, next: NextFunction)=> {
+    try {
+        const { refreshToken } = req.body;
+        if (!refreshToken) {
+            const error: any = new Error("Refresh token is required");
+            error.statusCode = 400;
+            throw error;
+        }
+
+        const tokenRecord = await UserToken.findOne({ token: refreshToken });
+        if (!tokenRecord) {
+            return res.status(200).json({
+                success: true,
+                message: "Already signed out or token has been revoked",
+            });
+        }
+
+        await tokenRecord.deleteOne();
+
+        res.status(200).json({
+            success: true,
+            message: "Signed out successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+};

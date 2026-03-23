@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from "../config/env.js";
-if (!JWT_SECRET)
-    throw new Error('JWT_SECRET is not defined');
+import { ACCESS_TOKEN_PRIVATE_KEY, JWT_SECRET } from "../config/env.js";
 import User from '../models/user.model.js';
 const authorize = async (req, res, next) => {
     try {
@@ -11,8 +9,8 @@ const authorize = async (req, res, next) => {
         }
         if (!token)
             return res.status(401).json({ message: 'Unauthorized' });
-        let secret = JWT_SECRET || 'some-secret-key';
-        const decoded = jwt.verify(token, secret);
+        const accessSecret = ACCESS_TOKEN_PRIVATE_KEY || JWT_SECRET || 'access-token-secret';
+        const decoded = jwt.verify(token, accessSecret);
         const user = await User.findById(decoded.userId);
         if (!user)
             return res.status(401).json({ message: 'Unathorized' });
