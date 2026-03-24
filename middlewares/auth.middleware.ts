@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_PRIVATE_KEY, JWT_SECRET } from "../config/env.js";
+import { ACCESS_TOKEN_PRIVATE_KEY } from "../config/env.js";
 
 import User from '../models/user.model.js';
 
@@ -16,7 +16,7 @@ const authorize = async (req: any, res: Response, next: NextFunction)=>{
 
         if(!token) return res.status(401).json({message: 'Unauthorized'});
 
-        const accessSecret = ACCESS_TOKEN_PRIVATE_KEY || JWT_SECRET || 'access-token-secret';
+        const accessSecret = ACCESS_TOKEN_PRIVATE_KEY || 'access-token-secret';
 
         const decoded = jwt.verify(token, accessSecret) as jwt.JwtPayload & { userId: string };
 

@@ -6,11 +6,11 @@ export const {
     PORT, 
     NODE_ENV, 
     DB_URI,
-    JWT_SECRET, JWT_EXPIRES_IN,
     ARCJET_KEY, ARCJET_ENV,
     QSTASH_URL, QSTASH_TOKEN,
     SERVER_URL,
-    EMAIL_PASSWORD
+    EMAIL_PASSWORD,
+    EMAIL
 } = process.env;
 
 export const ACCESS_TOKEN_PRIVATE_KEY = process.env.ACCESS_TOKEN_PRIVATE_KEY || "access-token-secret";
