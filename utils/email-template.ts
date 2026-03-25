@@ -1,3 +1,28 @@
+interface SubscriptionEmailData {
+  userName: string;
+  subscriptionName: string;
+  renewalDate: string;
+  planName: string;
+  price: string;
+  paymentMethod: string;
+  accountSettingsLink: string;
+  supportLink: string;
+  daysLeft: number;
+}
+
+interface OTPEmailData {
+  userName: string;
+  otp: string;
+  type: 'verification' | 'reset';
+  expiryMinutes: number;
+}
+
+interface EmailTemplate {
+  label: string;
+  generateSubject: (data: any) => string;
+  generateBody: (data: any) => string;
+}
+
 export const generateEmailTemplate = ({
   userName,
   subscriptionName,
@@ -8,7 +33,7 @@ export const generateEmailTemplate = ({
   accountSettingsLink,
   supportLink,
   daysLeft,
-}) => `
+}: SubscriptionEmailData) => `
 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 0; background-color: #f4f7fa;">
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         <tr>
@@ -71,7 +96,7 @@ export const generateOTPEmailTemplate = ({
   otp,
   type,
   expiryMinutes,
-}) => `
+}: OTPEmailData) => `
 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 0; background-color: #f4f7fa;">
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         <tr>
@@ -112,7 +137,13 @@ export const generateOTPEmailTemplate = ({
 </div>
 `;
 
-export const emailTemplates = [
+interface EmailTemplate {
+  label: string;
+  generateSubject: (data: any) => string;
+  generateBody: (data: any) => string;
+}
+
+export const emailTemplates: EmailTemplate[] = [
   {
     label: "7 days before reminder",
     generateSubject: (data) =>

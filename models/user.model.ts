@@ -37,7 +37,25 @@ const userSchema = new mongoose.Schema({
         match: [
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s])[^\s]{8,}$/,
             'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
-        ],
+        ],    },
+    isEmailVerified: {
+        type: Boolean,
+        default: false,
+    },
+    emailVerificationOTP: {
+        type: String,
+    },
+    emailVerificationOTPExpires: {
+        type: Date,
+    },
+    resetPasswordOTP: {
+        type: String,
+    },
+    resetPasswordOTPExpires: {
+        type: Date,
+    },
+    lastVerificationResend: {
+        type: Date,
     }
 }, {timestamps: true});
 

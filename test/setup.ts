@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DB_URI } from "../config/env.js";
+import { DB_URI } from "../dist/config/env.js";
 
 export function initTestEnv() {
     beforeAll(async () => {

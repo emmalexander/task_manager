@@ -26,9 +26,11 @@ app.use(errorMiddleware);
 app.get("/", (req, res) => {
     res.send('Welcome to Task Manager API');
 });
-app.listen(Number(PORT), "0.0.0.0", async () => {
-    console.log(`Task Manager APP is running on http://localhost:${PORT}`);
-    await connectToDatabase();
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(Number(PORT), "0.0.0.0", async () => {
+        console.log(`Task Manager APP is running on http://localhost:${PORT}`);
+        await connectToDatabase();
+    });
+}
 export default app;
 //# sourceMappingURL=app.js.map

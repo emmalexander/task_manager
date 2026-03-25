@@ -1,6 +1,7 @@
 // const app = require("../src/app.js");
 import app from "../dist/src/app.js";
 import request from "supertest";
+import User from "../dist/models/user.model.js";
 // const request = require("supertest");
 import { initTestEnv } from "./setup";
 import registerTaskTests from "./task.test";
@@ -30,7 +31,7 @@ describe("Sign in endpoint test", () => {
 });
 
 describe("Sign up endpoint test", () => {
-    it("should return 201 and a token", async () => {
+    it("should return 201 and request email verification", async () => {
         const res = await request(app)
             .post("/api/v1/auth/sign-up")
             .send({
@@ -41,7 +42,63 @@ describe("Sign up endpoint test", () => {
                 password: "Youtube123!@#",
             });
         expect(res.statusCode).toEqual(201);
-        expect(res.body).toHaveProperty("token");
+        expect(res.body.success).toBe(true);
+        expect(res.body.message).toContain("Please verify your email");
+    });
+});
+
+describe("Email verification and reset flow", () => {
+    const email = "verifyflow@example.com";
+    const password = "Youtube123!@#";
+    let otp: string;
+
+    it("should sign up user and store OTP", async () => {
+        const signupRes = await request(app).post("/api/v1/auth/sign-up").send({
+            firstName: "Verify",
+            lastName: "Flow",
+            phoneNumber: "08023456789",
+            email,
+            password,
+        });
+        expect(signupRes.statusCode).toEqual(201);
+
+        const userResp = await request(app).post("/api/v1/auth/resend-verification").send({ email });
+        expect(userResp.statusCode).toEqual(200);
+    });
+
+    it("should reject sign in before verification", async () => {
+        const res = await request(app).post("/api/v1/auth/sign-in").send({ email, password });
+        expect(res.statusCode).toEqual(403);
+    });
+
+    it("should verify email using OTP from DB", async () => {
+        const user = await User.findOne({ email }).select("emailVerificationOTP");
+        otp = user?.emailVerificationOTP as string;
+        const res = await request(app).post("/api/v1/auth/verify-email").send({ email, otp });
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.success).toBe(true);
+    });
+
+    it("should allow sign in after verification", async () => {
+        const res = await request(app).post("/api/v1/auth/sign-in").send({ email, password });
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.data).toHaveProperty("accessToken");
+    });
+
+    it("should request password reset and verify with OTP", async () => {
+        const createRes = await request(app).post("/api/v1/auth/request-password-reset").send({ email });
+        expect(createRes.statusCode).toEqual(200);
+
+        const user = await User.findOne({ email }).select("resetPasswordOTP");
+        const resetOtp = user?.resetPasswordOTP as string;
+
+        const verifyRes = await request(app).post("/api/v1/auth/verify-password-reset").send({
+            email,
+            otp: resetOtp,
+            newPassword: "NewYoutube123!@#",
+        });
+
+        expect(verifyRes.statusCode).toEqual(200);
     });
 });
 

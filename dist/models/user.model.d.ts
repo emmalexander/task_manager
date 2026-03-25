@@ -5,6 +5,12 @@ declare const User: mongoose.Model<{
     email: string;
     phoneNumber: string;
     password: string;
+    isEmailVerified: boolean;
+    emailVerificationOTP?: string | null;
+    emailVerificationOTPExpires?: NativeDate | null;
+    resetPasswordOTP?: string | null;
+    resetPasswordOTPExpires?: NativeDate | null;
+    lastVerificationResend?: NativeDate | null;
 } & mongoose.DefaultTimestampProps, {}, {}, {
     id: string;
 }, mongoose.Document<unknown, {}, {
@@ -13,6 +19,12 @@ declare const User: mongoose.Model<{
     email: string;
     phoneNumber: string;
     password: string;
+    isEmailVerified: boolean;
+    emailVerificationOTP?: string | null;
+    emailVerificationOTPExpires?: NativeDate | null;
+    resetPasswordOTP?: string | null;
+    resetPasswordOTPExpires?: NativeDate | null;
+    lastVerificationResend?: NativeDate | null;
 } & mongoose.DefaultTimestampProps, {
     id: string;
 }, {
@@ -23,6 +35,12 @@ declare const User: mongoose.Model<{
     email: string;
     phoneNumber: string;
     password: string;
+    isEmailVerified: boolean;
+    emailVerificationOTP?: string | null;
+    emailVerificationOTPExpires?: NativeDate | null;
+    resetPasswordOTP?: string | null;
+    resetPasswordOTPExpires?: NativeDate | null;
+    lastVerificationResend?: NativeDate | null;
 } & mongoose.DefaultTimestampProps & {
     _id: mongoose.Types.ObjectId;
 } & {
@@ -37,12 +55,24 @@ declare const User: mongoose.Model<{
     email: string;
     phoneNumber: string;
     password: string;
+    isEmailVerified: boolean;
+    emailVerificationOTP?: string | null;
+    emailVerificationOTPExpires?: NativeDate | null;
+    resetPasswordOTP?: string | null;
+    resetPasswordOTPExpires?: NativeDate | null;
+    lastVerificationResend?: NativeDate | null;
 } & mongoose.DefaultTimestampProps, mongoose.Document<unknown, {}, {
     firstName: string;
     lastName: string;
     email: string;
     phoneNumber: string;
     password: string;
+    isEmailVerified: boolean;
+    emailVerificationOTP?: string | null;
+    emailVerificationOTPExpires?: NativeDate | null;
+    resetPasswordOTP?: string | null;
+    resetPasswordOTPExpires?: NativeDate | null;
+    lastVerificationResend?: NativeDate | null;
 } & mongoose.DefaultTimestampProps, {
     id: string;
 }, mongoose.ResolveSchemaOptions<{
@@ -53,6 +83,12 @@ declare const User: mongoose.Model<{
     email: string;
     phoneNumber: string;
     password: string;
+    isEmailVerified: boolean;
+    emailVerificationOTP?: string | null;
+    emailVerificationOTPExpires?: NativeDate | null;
+    resetPasswordOTP?: string | null;
+    resetPasswordOTPExpires?: NativeDate | null;
+    lastVerificationResend?: NativeDate | null;
 } & mongoose.DefaultTimestampProps & {
     _id: mongoose.Types.ObjectId;
 } & {
@@ -68,6 +104,12 @@ declare const User: mongoose.Model<{
         email: string;
         phoneNumber: string;
         password: string;
+        isEmailVerified: boolean;
+        emailVerificationOTP?: string | null;
+        emailVerificationOTPExpires?: NativeDate | null;
+        resetPasswordOTP?: string | null;
+        resetPasswordOTPExpires?: NativeDate | null;
+        lastVerificationResend?: NativeDate | null;
     } & mongoose.DefaultTimestampProps, {
         id: string;
     }, mongoose.ResolveSchemaOptions<{
@@ -78,6 +120,12 @@ declare const User: mongoose.Model<{
         email: string;
         phoneNumber: string;
         password: string;
+        isEmailVerified: boolean;
+        emailVerificationOTP?: string | null;
+        emailVerificationOTPExpires?: NativeDate | null;
+        resetPasswordOTP?: string | null;
+        resetPasswordOTPExpires?: NativeDate | null;
+        lastVerificationResend?: NativeDate | null;
     } & mongoose.DefaultTimestampProps & {
         _id: mongoose.Types.ObjectId;
     } & {
@@ -91,6 +139,12 @@ declare const User: mongoose.Model<{
     email: string;
     phoneNumber: string;
     password: string;
+    isEmailVerified: boolean;
+    emailVerificationOTP?: string | null;
+    emailVerificationOTPExpires?: NativeDate | null;
+    resetPasswordOTP?: string | null;
+    resetPasswordOTPExpires?: NativeDate | null;
+    lastVerificationResend?: NativeDate | null;
     createdAt: NativeDate;
     updatedAt: NativeDate;
 } & {
@@ -103,6 +157,12 @@ declare const User: mongoose.Model<{
     email: string;
     phoneNumber: string;
     password: string;
+    isEmailVerified: boolean;
+    emailVerificationOTP?: string | null;
+    emailVerificationOTPExpires?: NativeDate | null;
+    resetPasswordOTP?: string | null;
+    resetPasswordOTPExpires?: NativeDate | null;
+    lastVerificationResend?: NativeDate | null;
     createdAt: NativeDate;
     updatedAt: NativeDate;
 } & {

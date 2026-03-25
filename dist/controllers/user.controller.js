@@ -11,7 +11,7 @@ export const getUsers = async (req, res, next) => {
 };
 export const getUser = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user._id).select("-password");
+        const user = await User.findById(req.user._id).select("-password -emailVerificationOTP -resetPasswordOTP");
         if (!user) {
             const error = new Error("User not found");
             res.statusCode = 404;

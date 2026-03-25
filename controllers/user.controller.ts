@@ -15,7 +15,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction)=
 
 export const getUser = async (req: any, res: Response, next: NextFunction)=> {
     try {
-        const user = await User.findById(req.user._id,).select("-password");
+        const user = await User.findById(req.user._id,).select("-password -emailVerificationOTP -resetPasswordOTP");
 
         if(!user){
             const error = new Error("User not found");
