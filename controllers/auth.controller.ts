@@ -33,7 +33,7 @@ const sendEmail = async (to: string, subject: string, html: string) => {
 };
 
 const sendOTPEmail = async (to: string, userName: string, otp: string, type: 'verification' | 'reset') => {
-    const template = emailTemplates.find((t: any) => t.label === `${type} otp`);
+    const template = emailTemplates.find((t: any) => t.label.includes(`${type} otp`));
     if (!template) throw new Error(`OTP template for ${type} not found`);
 
     const mailInfo = {
@@ -321,8 +321,8 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
             message: "User signed in successfully",
             data: {
                 user: userWithoutPassword,
-                accessToken,
-                refreshToken,
+                accessToken: accessToken,
+                refreshToken: refreshToken,
             }
         });
     } catch(error) {

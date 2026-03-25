@@ -25,7 +25,7 @@ const sendEmail = async (to, subject, html) => {
     await transporter.sendMail(mailOptions);
 };
 const sendOTPEmail = async (to, userName, otp, type) => {
-    const template = emailTemplates.find((t) => t.label === `${type} otp`);
+    const template = emailTemplates.find((t) => t.label.includes(`${type} otp`));
     if (!template)
         throw new Error(`OTP template for ${type} not found`);
     const mailInfo = {
@@ -259,8 +259,8 @@ export const signIn = async (req, res, next) => {
             message: "User signed in successfully",
             data: {
                 user: userWithoutPassword,
-                accessToken,
-                refreshToken,
+                accessToken: accessToken,
+                refreshToken: refreshToken,
             }
         });
     }
