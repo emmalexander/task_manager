@@ -304,7 +304,7 @@ export const signIn = async (req: Request, res: Response, next: NextFunction)=> 
             throw error;
         }
 
-        const userWithoutPassword = await User.findById(user._id).select("-password -emailVerificationOTP -resetPasswordOTP");
+        const userWithoutPassword = await User.findById(user._id).select("-password -emailVerificationOTP -resetPasswordOTP -emailVerificationOTPExpires -updatedAt -lastVerificationResend");
 
         const isPasswordValid = bcrypt.compareSync(password, user.password);
 

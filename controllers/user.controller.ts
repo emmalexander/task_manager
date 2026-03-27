@@ -15,7 +15,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction)=
 
 export const getUser = async (req: any, res: Response, next: NextFunction)=> {
     try {
-        const user = await User.findById(req.user._id,).select("-password -emailVerificationOTP -resetPasswordOTP");
+        const user = await User.findById(req.user._id,).select("-password -emailVerificationOTP -resetPasswordOTP -emailVerificationOTPExpires -updatedAt -lastVerificationResend -__v");
 
         if(!user){
             const error = new Error("User not found");
@@ -23,7 +23,7 @@ export const getUser = async (req: any, res: Response, next: NextFunction)=> {
             throw error;
         }
 
-        const userTaskLists = await TaskList.find({userId: user._id}).populate('tasks')??[];
+        const userTaskLists = await TaskList.find({userId: user._id}).select("-__v").populate('tasks')??[];
 
         const userData = {
             user: user,

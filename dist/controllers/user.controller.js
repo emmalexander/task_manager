@@ -11,13 +11,13 @@ export const getUsers = async (req, res, next) => {
 };
 export const getUser = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user._id).select("-password -emailVerificationOTP -resetPasswordOTP");
+        const user = await User.findById(req.user._id).select("-password -emailVerificationOTP -resetPasswordOTP -emailVerificationOTPExpires -updatedAt -lastVerificationResend -__v");
         if (!user) {
             const error = new Error("User not found");
             res.statusCode = 404;
             throw error;
         }
-        const userTaskLists = await TaskList.find({ userId: user._id }).populate('tasks') ?? [];
+        const userTaskLists = await TaskList.find({ userId: user._id }).select("-__v").populate('tasks') ?? [];
         const userData = {
             user: user,
             taskLists: userTaskLists,

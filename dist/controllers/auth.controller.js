@@ -246,7 +246,7 @@ export const signIn = async (req, res, next) => {
             error.statusCode = 403;
             throw error;
         }
-        const userWithoutPassword = await User.findById(user._id).select("-password -emailVerificationOTP -resetPasswordOTP");
+        const userWithoutPassword = await User.findById(user._id).select("-password -emailVerificationOTP -resetPasswordOTP -emailVerificationOTPExpires -updatedAt -lastVerificationResend");
         const isPasswordValid = bcrypt.compareSync(password, user.password);
         if (!isPasswordValid) {
             const error = new Error("Invalid Password");
