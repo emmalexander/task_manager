@@ -197,7 +197,7 @@ export const getUserTasksByStatus = async (req: any, res: Response, next: NextFu
     try {
         const status = req.params.status;
 
-        const tasks = await Task.find({ userId: req.user._id, status: status });
+        const tasks = await Task.find({ userId: req.user._id, status: status }).select("-__v");
 
         res.status(200).json({success: true, data: tasks});
     } catch (error){
@@ -222,7 +222,7 @@ export const getUserTasks = async (req: any, res: Response, next: NextFunction)=
         // const sort = req.query.sort;
         var queryObject = { userId: req.user._id };
 
-        let results = Task.find(queryObject);
+        let results = Task.find(queryObject).select("-__v");
 
         if(status){
             const statusObject = {status: status};
@@ -326,7 +326,7 @@ export const getPendingTasks = async (req: any, res: Response, next: NextFunctio
         const totalTasks = await Task.countDocuments({ userId: req.user._id, status: "pending" });
 
         // Get paginated tasks
-        const tasks = await Task.find({ userId: req.user._id, status: "pending" })
+        const tasks = await Task.find({ userId: req.user._id, status: "pending" }).select("-__v")
             .skip(skip)
             .limit(limit);
 
@@ -356,7 +356,7 @@ export const getInProgressTasks = async (req: any, res: Response, next: NextFunc
         const totalTasks = await Task.countDocuments({ userId: req.user._id, status: "in-progress" });
 
         // Get paginated tasks
-        const tasks = await Task.find({ userId: req.user._id, status: "in-progress" })
+        const tasks = await Task.find({ userId: req.user._id, status: "in-progress" }).select("-__v")
             .skip(skip)
             .limit(limit);
 
@@ -386,7 +386,7 @@ export const getCompletedTasks = async (req: any, res: Response, next: NextFunct
         const totalTasks = await Task.countDocuments({ userId: req.user._id, status: "completed" });
 
         // Get paginated tasks
-        const tasks = await Task.find({ userId: req.user._id, status: "completed" })
+        const tasks = await Task.find({ userId: req.user._id, status: "completed" }).select("-__v")
             .skip(skip)
             .limit(limit);
 
@@ -412,7 +412,7 @@ export const updateATaskStatus = async (req: any, res: Response, next: NextFunct
 
         const newStatus = req.body.status;
 
-        const task =  await Task.findById(taskId);
+        const task =  await Task.findById(taskId).select("-__v");
 
         if(!task){
             const error: any = new Error('Task not found');
@@ -434,3 +434,39 @@ export const updateATaskStatus = async (req: any, res: Response, next: NextFunct
         next(error);
     }
 };
+
+export const searchTasks  = async (req: any, res: Response, next: NextFunction)=> {
+    try {
+
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // tast title, description
+        const name = (req.query.name || req.params.name);
+        //const description = req.query.description || req.params.description;
+
+        const query: any = { userId: req.user._id };
+        if (name) {
+            query.title = { $regex: name, $options: "i" };
+        }
+
+        const totalResults = await Task.countDocuments(query);
+
+        const tasks = await Task.find(query).select("-__v").skip(skip).limit(limit);
+
+        //const totalPages = Math.ceil(totalTasks / limit);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                page: page,
+                totalResult: totalResults,
+                results: tasks
+            }
+        });
+
+    } catch(error) {
+        next(error);
+    }
+}

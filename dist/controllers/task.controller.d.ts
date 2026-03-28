@@ -14,4 +14,5 @@ export declare const getPendingTasks: (req: any, res: Response, next: NextFuncti
 export declare const getInProgressTasks: (req: any, res: Response, next: NextFunction) => Promise<void>;
 export declare const getCompletedTasks: (req: any, res: Response, next: NextFunction) => Promise<void>;
 export declare const updateATaskStatus: (req: any, res: Response, next: NextFunction) => Promise<void>;
+export declare const searchTasks: (req: any, res: Response, next: NextFunction) => Promise<void>;
 //# sourceMappingURL=task.controller.d.ts.map

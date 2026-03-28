@@ -1,6 +1,22 @@
 import { Router } from "express";
 import authorize from "../middlewares/auth.middleware.js";
-import { createTask, createTaskList, getUserTaskLists, updateATaskList, updateATask, deleteTask, deleteTaskList, getUserTasksByStatus, getUserTasks, addTaskToFavorite, removeTaskFromFavorite, getPendingTasks, getInProgressTasks, getCompletedTasks, updateATaskStatus } from "../controllers/task.controller.js";
+import { createTask, 
+    createTaskList, 
+    getUserTaskLists, 
+    updateATaskList, 
+    updateATask, 
+    deleteTask, 
+    deleteTaskList, 
+    getUserTasksByStatus, 
+    getUserTasks, 
+    addTaskToFavorite, 
+    removeTaskFromFavorite, 
+    getPendingTasks, 
+    getInProgressTasks, 
+    getCompletedTasks, 
+    updateATaskStatus,
+    searchTasks
+} from "../controllers/task.controller.js";
 
 const taskRouter = Router();
 
@@ -11,6 +27,8 @@ const taskRouter = Router();
 taskRouter.post('/', authorize, createTask);
 
 taskRouter.get('/status/:status', authorize, getUserTasksByStatus);
+
+taskRouter.get('/search', authorize, searchTasks);
 
 taskRouter.post('/favorites/add/:id', authorize, addTaskToFavorite);
 
